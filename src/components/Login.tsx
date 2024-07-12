@@ -6,36 +6,77 @@ import {
 } from 'react';
 import { checkValidData } from '../utils/validate';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 
 const Login = () => {
   const [isSignInForm, SetIsSignInForm] = useState(true);
-  const [errorMessage, SetErrorMessage] = useState(null);
-
-  useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/todos/1').then((res) =>
-      res.json().then((js) => console.log(js))
-    );
-  }, []);
+  const [errorMessage, SetErrorMessage] = useState('');
 
   const email = useRef(null);
   const password = useRef(null);
+  const fullName = useRef(null);
   const navigate = useNavigate();
 
   const toggleForm = () => {
     SetIsSignInForm(!isSignInForm);
   };
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     const isValid = checkValidData(
       email?.current?.value,
       password?.current?.value
     );
-    if (isSignInForm && isValid == null) {
-      navigate('./browse');
+
+
+
+    if (isSignInForm && isValid == '') {
+
+      try {
+        const response = await axios.post('http://localhost:3000/auth/login', {
+          email: email?.current?.value,
+          password: password?.current?.value
+
+        })
+        console.log(response, 'dsdsd')
+        if (response.data.status == 'success') {
+          localStorage.setItem('token', response?.data.access_token)
+          navigate('./browse');
+        }
+        if (response?.data?.statusCode == 400) {
+          SetErrorMessage('Login Failed')
+        }
+
+
+      } catch (error) {
+        SetErrorMessage('Login Failed')
+        console.error('Login Failed', error)
+      }
+
+    } else if (!isSignInForm) {
+      if (isValid == '') {
+        try {
+          const response = await axios.post('http://localhost:3000/auth/register', {
+            email: email?.current?.value,
+            password: password?.current?.value,
+            username: fullName?.current?.value,
+            name:fullName?.current?.value,
+
+          })
+          if(response?.data?.status == 'created'){
+            SetIsSignInForm(true)
+          }
+        } catch (error) {
+            SetErrorMessage('Sign up Failed')
+        }
+      }
+
+    } else {
+      console.log(isValid, isSignInForm);
+      SetErrorMessage(isValid);
     }
-    console.log(isValid, isSignInForm);
-    SetErrorMessage(isValid);
+
   };
 
   return (
@@ -51,6 +92,7 @@ const Login = () => {
         </h1>
         {!isSignInForm ? (
           <input
+            ref={fullName}
             type="text"
             placeholder="Full Name"
             className="p-2 m-2 w-full text-black"
