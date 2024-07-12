@@ -1,29 +1,12 @@
 import Header from './Header';
 import {
-  useCallback,
-  useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
 import { checkValidData } from '../utils/validate';
-import { moodContext } from '../utils/moods';
-import useCustom from '../utils/customHook';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const List = React.memo(({ users, onRemove }) => {
-  return (
-    <div>
-      {users.map((user) => (
-        <li key={user.id}>
-          {user.name} <span onClick={() => onRemove(user.id)}>X</span>
-        </li>
-      ))}
-    </div>
-  );
-});
 
 const Login = () => {
   const [isSignInForm, SetIsSignInForm] = useState(true);
