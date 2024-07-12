@@ -34,11 +34,4 @@ export default {
 - Login/Sign up page
 - once logged in redirect to browse page
 - Browse Page(after authentication)
-  - Header
-  - Main Movie
-  - Trailer
-  - title & descriptions
-  - movie list
-- NetFlix Gpt
-  - Search for movie
-  - movie suggestion
+  
